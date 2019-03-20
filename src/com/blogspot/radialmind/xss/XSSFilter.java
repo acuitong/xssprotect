@@ -9,6 +9,7 @@
 
 package com.blogspot.radialmind.xss;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import com.blogspot.radialmind.html.IHTMLFilter;
 public class XSSFilter implements IHTMLFilter {
 	
 	private static final Set<String> FORBIDDEN_TAGS = new HashSet<String>();
-	
+	//这个类配置了过滤移除的标签
 	// The tags to be removed. Case insensitive of course.
 	static {
 		FORBIDDEN_TAGS.add( "script" );
@@ -45,6 +46,7 @@ public class XSSFilter implements IHTMLFilter {
 		FORBIDDEN_TAGS.add( "link" );
 		FORBIDDEN_TAGS.add( "import" );
 		FORBIDDEN_TAGS.add( "xml" );
+		FORBIDDEN_TAGS.add( "a" );
 	}
 	
 	/**
@@ -142,7 +144,7 @@ public class XSSFilter implements IHTMLFilter {
 	 * @param value	The value being modified
 	 * @return	The value free from control characters
 	 */
-	private String decode( String value ) {
+	private static String decode( String value ) {
 		value = value.replace("\u0000", "" );
 		value = value.replace("\u0001", "" );
 		value = value.replace("\u0002", "" );
@@ -174,7 +176,19 @@ public class XSSFilter implements IHTMLFilter {
 		value = value.replace("\u001C", "" );
 		value = value.replace("\u001D", "" );
 		value = value.replace("\u001E", "" );
-		value = value.replace("\u001F", "" );
 		return value;
 	}
+	public static void getField(Object object) {
+		//获得类
+		Class clazz = object.getClass();
+		// 获取实体类的所有属性信息，返回Field数组
+		Field[] fields = clazz.getDeclaredFields();
+		for (Field field : fields) {
+			String type = field.getGenericType().toString();
+			System.out.println("获取字段的字段值:"+object);
+			System.out.println("获取字段原始类型:"+type);
+		}
+	}
+
+
 }

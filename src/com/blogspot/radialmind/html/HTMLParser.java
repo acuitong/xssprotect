@@ -46,33 +46,34 @@ public class HTMLParser {
 	 */
 	public static void process( Reader reader, Writer writer, IHTMLFilter htmlFilter, boolean convertIntoValidXML ) throws HandlingException {
 		try {
-			// Open a char stream input for the document
+			//reader 是添加html的标签  writer  是替换写出的格式 目前位""
+			// 打开文档的char流输入
 			ANTLRStringStream input = new ANTLRReaderStream( reader );
 			
-			// Start lexing the input
+			// 开始对输入进行词法分析
 			htmlLexerLexer lex = new htmlLexerLexer(input);
 
-			// Tokenstream for the parser.
+			// 用于解析器的Tokenstream
 			CommonTokenStream tokens = new CommonTokenStream(lex);
 			htmlParserParser parser = new htmlParserParser(tokens);
 			htmlParserParser.document_return root = parser.document();
 
-			// Set up the tree parser
+			// 设置树解析器
 			CommonTreeNodeStream nodes = new CommonTreeNodeStream((Tree)root.getTree());
 			htmlTreeParser walker = new htmlTreeParser(nodes);
 
-			// Initialize data structures
+			// 初始化数据结构
 			topNode = new ThreadLocal();
 			currentNode = new ThreadLocal();
 			attrNode = new ThreadLocal();
 
-			// Walk in the entire document using the tree parser.
+			// 使用树解析器遍历整个文档.
 			walker.document();
 			
-			// Get the top node
+			// 获取顶部节点
 			TagNode top = (TagNode)topNode.get();
 			
-			// Write the clean document out.
+			// 把干净的文档写出来.
 			top.writeAll( writer, htmlFilter, convertIntoValidXML, false );
 		} catch ( IOException ioe ) {
 			throw new HandlingException( "Could not parse document" );
@@ -80,7 +81,6 @@ public class HTMLParser {
 			throw new HandlingException( "Could not parse document" );
 		}
 	}
-	
 	/**
 	 * Notifies the opening of a new tag
 	 * 

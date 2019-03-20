@@ -30,6 +30,7 @@ public class htmlLexerLexer extends Lexer {
 
     public htmlLexerLexer() {;} 
     public htmlLexerLexer(CharStream input) {
+        //char流  input 赋值给父类的 input
         super(input);
     }
     public String getGrammarFileName() { return "/workspace/xssprotect/trunk/grammar/htmlLexer.g"; }
